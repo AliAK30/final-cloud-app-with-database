@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 # <HINT> Import any new Models here
-from .models import Course, Enrollment
+from .models import Course, Enrollment, Submission
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
@@ -110,8 +110,11 @@ def enroll(request, course_id):
 
 
 def submitexam(request, course_id):
-    user = User.objects.all()
-    print(user)
+    enroll_obj = Enrollment.objects.get(user=request.user, course = course_id)
+    submission_obj = Submission.objects.create(enrollment_id = enroll_obj.id)
+    #submission_obj.save()
+    ids = request.POST.dict()
+    print(ids.values())
     return HttpResponseRedirect(reverse(viewname='onlinecourse:course_details', args=(course_id,)))
     #enrollment = Enrollment.objects.get(user_id = )
 

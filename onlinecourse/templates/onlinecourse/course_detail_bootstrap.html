@@ -30,23 +30,23 @@
                 
                 <form id="questionform" action="{% url 'onlinecourse:submitexam' course.id %}" method="post">
                     {% csrf_token %}
-                    <!-- {% for question in questions %} -->
+                    {% for question in course.question_set.all %}
                     <div class="card mt-1">
-                        <div class="card-header"><h5><!-- {{ question.question_text}} -->What is Django?</h5></div>
+                        <div class="card-header"><h5>{{ question.question_content}}</h5></div>
                         
                         <div class="form-group">
-                           <!-- {% for choice in question %} -->
+                           {% for choice in question.choice_set.all %}
                             <div class="form-check">
                                 <label class="form-check-label">
                                     <input type="checkbox" name="choice_{{choice.id}}"
                                            class="form-check-input" id="{{choice.id}}"
-                                           value="{{choice.id}}"><!-- {{ choice.choice_text }} -->A Web Framework
+                                           value="{{choice.id}}">{{ choice.choice_content }}
                                 </label>
                             </div>
-                            <!-- {% endfor %} -->
+                            {% endfor %}
                         </div>
                     </div>
-                    <!-- {% endfor %} -->
+                    {% endfor %}
                 <input class="btn btn-success btn-block" type="submit" value="Submit">
                 </form>
 
