@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 # <HINT> Import any new Models here
-from .models import Course, Enrollment, Submission
+from .models import Course, Enrollment, Submission, Question
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
@@ -112,24 +112,13 @@ def enroll(request, course_id):
 def submitexam(request, course_id):
     enroll_obj = Enrollment.objects.get(user=request.user, course = course_id)
     submission_obj = Submission.objects.create(enrollment_id = enroll_obj.id)
-    #submission_obj.save()
-    ids = request.POST.dict()
-    print(ids.values())
+    ids = list(request.POST.values())[1:]
+    for id in ids:
+        submission_obj.choices.add(id)
+    submission_obj.save()
+
     return HttpResponseRedirect(reverse(viewname='onlinecourse:course_details', args=(course_id,)))
-    #enrollment = Enrollment.objects.get(user_id = )
-
-
-
-# <HINT> A example method to collect the selected choices from the exam form from the request object
-#def extract_answers(request):
-#    submitted_anwsers = []
-#    for key in request.POST:
-#        if key.startswith('choice'):
-#            value = request.POST[key]
-#            choice_id = int(value)
-#            submitted_anwsers.append(choice_id)
-#    return submitted_anwsers
-
+    #return HttpResponseRedirect(reverse(viewname='onlinecourse:exam_result', args=(course_id, submission_obj.id)))
 
 # <HINT> Create an exam result view to check if learner passed exam and show their question results and result for each question,
 # you may implement it based on the following logic:
@@ -137,7 +126,9 @@ def submitexam(request, course_id):
         # Get the selected choice ids from the submission record
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
-#def show_exam_result(request, course_id, submission_id):
+def show_exam_result(request, course_id, submission_id):
+    print("ali")
+
 
 
 
