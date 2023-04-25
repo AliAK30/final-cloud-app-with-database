@@ -108,10 +108,12 @@ class Question(models.Model):
 
     # A sample model method to calculate if learner will get the score of the question
     def is_get_score(self, selected_ids):
-        for choice in selected_ids:
-            if not choice.is_correct:
-                return False
-        return True
+        if selected_ids:
+            for choice in selected_ids:
+                if not choice.is_correct:
+                    return False
+            return True
+        return False
         
         
 
