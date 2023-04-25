@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import get_user
 import logging
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -70,6 +71,7 @@ def check_if_enrolled(user, course):
     return is_enrolled
 
 
+
 # CourseListView
 class CourseListView(generic.ListView):
     template_name = 'onlinecourse/course_list_bootstrap.html'
@@ -87,7 +89,11 @@ class CourseListView(generic.ListView):
 class CourseDetailView(generic.DetailView):
     model = Course
     template_name = 'onlinecourse/course_detail_bootstrap.html'
-
+    
+    """ def get_context_data(self, **kwargs):
+        course = Course.objects.get(pk=kwargs.get('pk'))
+        return {"course":course, "exam":ExamForm()} """
+    
 
 def enroll(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
@@ -103,14 +109,12 @@ def enroll(request, course_id):
     return HttpResponseRedirect(reverse(viewname='onlinecourse:course_details', args=(course.id,)))
 
 
-# <HINT> Create a submit view to create an exam submission record for a course enrollment,
-# you may implement it based on following logic:
-         # Get user and course object, then get the associated enrollment object created when the user enrolled the course
-         # Create a submission object referring to the enrollment
-         # Collect the selected choices from exam form
-         # Add each selected choice object to the submission object
-         # Redirect to show_exam_result with the submission id
-#def submit(request, course_id):
+def submitexam(request, course_id):
+    user = User.objects.all()
+    print(user)
+    return HttpResponseRedirect(reverse(viewname='onlinecourse:course_details', args=(course_id,)))
+    #enrollment = Enrollment.objects.get(user_id = )
+
 
 
 # <HINT> A example method to collect the selected choices from the exam form from the request object
