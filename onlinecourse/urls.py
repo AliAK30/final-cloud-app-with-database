@@ -19,6 +19,6 @@ urlpatterns = [
 
     path('<int:course_id>/submitexam/', views.submitexam, name='submitexam'),
 
-    path('<int:course_id>/<int:submit_id>/showexam/', views.show_exam_result, name="exam_result")
+    path('<int:course_id>/<int:submission_id>/showexam/', views.show_exam_result, name="exam_result")
 
  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

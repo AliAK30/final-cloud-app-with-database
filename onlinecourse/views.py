@@ -90,10 +90,6 @@ class CourseDetailView(generic.DetailView):
     model = Course
     template_name = 'onlinecourse/course_detail_bootstrap.html'
     
-    """ def get_context_data(self, **kwargs):
-        course = Course.objects.get(pk=kwargs.get('pk'))
-        return {"course":course, "exam":ExamForm()} """
-    
 
 def enroll(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
@@ -116,18 +112,27 @@ def submitexam(request, course_id):
     for id in ids:
         submission_obj.choices.add(id)
     submission_obj.save()
+    print(submission_obj.id)
+    return HttpResponseRedirect(reverse(viewname='onlinecourse:exam_result', args=(course_id, submission_obj.id,)))
 
-    return HttpResponseRedirect(reverse(viewname='onlinecourse:course_details', args=(course_id,)))
-    #return HttpResponseRedirect(reverse(viewname='onlinecourse:exam_result', args=(course_id, submission_obj.id)))
 
-# <HINT> Create an exam result view to check if learner passed exam and show their question results and result for each question,
-# you may implement it based on the following logic:
-        # Get course and submission based on their ids
-        # Get the selected choice ids from the submission record
-        # For each selected choice, check if it is a correct answer or not
-        # Calculate the total score
 def show_exam_result(request, course_id, submission_id):
-    print("ali")
+    context = {}
+    submission_obj = Submission.objects.get(pk=submission_id)
+    total_questions = Question.objects.filter(course = Course.objects.get(pk=course_id))
+    total_marks = 0.0
+    obt_marks = 0.0
+    for quest in total_questions:
+        total_marks += quest.grade_points
+        if quest.is_get_score(submission_obj.choices.filter(question = quest)):
+            obt_marks+=quest.grade_points
+    context['course'] = Course.objects.get(pk=course_id)
+    context['grade'] = int(obt_marks/total_marks*100)
+    context['min'] = 80
+    context['questions'] = total_questions
+    context['selected'] = submission_obj.choices.all()
+    #print(f"Total: {total_marks*100}, Obtained: {context['grade']}")
+    return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
 
 
 

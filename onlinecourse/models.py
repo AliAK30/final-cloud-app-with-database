@@ -107,7 +107,11 @@ class Question(models.Model):
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
 
     # A sample model method to calculate if learner will get the score of the question
-    #def is_get_score(self, selected_ids):
+    def is_get_score(self, selected_ids):
+        for choice in selected_ids:
+            if not choice.is_correct:
+                return False
+        return True
         
         
 
